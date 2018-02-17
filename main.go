@@ -57,7 +57,8 @@ func main() {
 		switch update.Message.Command() {
 		case "start":
 			reply = "Привет. Я телеграм-бот"
-
+		}
+		
 		if update.Message.Command() == "хочу звук" {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Какой звук вы хотите?")
 			bot.Send(msg)
@@ -70,4 +71,3 @@ func main() {
 		
 	}
 }
-
