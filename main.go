@@ -61,11 +61,7 @@ func main() {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
 		bot.Send(msg)
 
-		youtube.Search()
-		youtube.Download()
-		youtube.Convert()
-
-		telegram.Upload()
+		
 		
 		
 	}
