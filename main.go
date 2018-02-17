@@ -5,6 +5,8 @@ import (
 	"github.com/Syfaro/telegram-bot-api"
 	"log"
 	"os"
+	"chatbotproject/telegram"
+	"chatbotproject/youtube"
 )
 
 var (
@@ -44,30 +46,27 @@ func main() {
 	// вычитываем их и обрабатываем
 	for update := range updates {
 
-		reply := "Не знаю что сказать"
 		if update.Message == nil {
 			continue
 		}
 
-		// логируем от кого какое сообщение пришло
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-		// свитч на обработку комманд
-		// комманда - сообщение, начинающееся с "/"
-		switch update.Message.Command() {
-		case "start":
-			reply = "Привет. Я телеграм-бот"
-		}
-		
-		if update.Message.Command() == "хочу звук" {
+		if update.Message.Command() == "sound" {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Какой звук вы хотите?")
 			bot.Send(msg)
 		}
 
-		// создаем ответное сообщение
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, reply)
-		// отправляем
+		text := update.Message.Text
+		
+		// создание сообщения от бота пользвателю
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
 		bot.Send(msg)
+
+		youtube.Search()
+		youtube.Download()
+		youtube.Convert()
+
+		telegram.Upload()
+		
 		
 	}
 }
