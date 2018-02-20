@@ -4,7 +4,9 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"net/url"
 
+	"github.com/rylio/ytdl"
 	"google.golang.org/api/googleapi/transport"
 	"google.golang.org/api/youtube/v3"
 )
@@ -59,5 +61,24 @@ func Search(searchText string) string {
 	}
 
 	return keys[0]
+}
 
+/* Эта функция возвращает прямую ссылку на видео по ID */
+
+func GetDownloadUrl(idVideo string) (*url.URL, error) {
+
+	infoFromId, _ := ytdl.GetVideoInfoFromID(idVideo)
+
+	foundFormat := func (formats ytdl.FormatList) ytdl.Format {
+		var foundFormat ytdl.Format
+		bestFormats := formats.Filter(ytdl.FormatResolutionKey, []interface{}{"360p", "720p"}).Filter(ytdl.FormatExtensionKey, []interface{}{"mp4"}).Filter(ytdl.FormatAudioEncodingKey, []interface{}{"aac"}).Extremes(ytdl.FormatResolutionKey, true).Extremes(ytdl.FormatAudioBitrateKey, true)
+		for _, format := range bestFormats {
+			if format.Extension == "mp4" {
+				foundFormat = format
+			}
+		}
+		return foundFormat
+	}
+	downloadUrl, err := vid.GetDownloadURL(foundFormat(vid.Formats))
+	return downloadUrl, err
 }
