@@ -79,6 +79,6 @@ func GetDownloadUrl(idVideo string) (*url.URL, error) {
 		}
 		return foundFormat
 	}
-	downloadUrl, err := vid.GetDownloadURL(foundFormat(vid.Formats))
+	downloadUrl, err := infoFromId.GetDownloadURL(foundFormat(infoFromId.Formats))
 	return downloadUrl, err
 }
