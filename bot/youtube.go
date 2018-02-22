@@ -16,7 +16,7 @@ var (
 	maxResults = flag.Int64("max-results", 1, "Max YouTube results")
 )
 
-const developerKey = "DEVELOPER KEY PASTE HERE"
+const developerKey = "AIzaSyCF8UBXeAZ09-OphvJka7ggDSwAMUIexK8"
 
 // Search эта функция возвращает id видеофайла
 // найденного в ютубе (первого совпавщего)
@@ -69,7 +69,7 @@ func GetDownloadUrl(idVideo string) (*url.URL, error) {
 
 	infoFromId, _ := ytdl.GetVideoInfoFromID(idVideo)
 
-	foundFormat := func (formats ytdl.FormatList) ytdl.Format {
+	foundFormat := func(formats ytdl.FormatList) ytdl.Format {
 		var foundFormat ytdl.Format
 		bestFormats := formats.Filter(ytdl.FormatResolutionKey, []interface{}{"360p", "720p"}).Filter(ytdl.FormatExtensionKey, []interface{}{"mp4"}).Filter(ytdl.FormatAudioEncodingKey, []interface{}{"aac"}).Extremes(ytdl.FormatResolutionKey, true).Extremes(ytdl.FormatAudioBitrateKey, true)
 		for _, format := range bestFormats {

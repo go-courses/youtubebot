@@ -2,11 +2,11 @@ package main
 
 import (
 	"flag"
-	"github.com/Syfaro/telegram-bot-api"
 	"log"
 	"os"
-	"chatbotproject/telegram"
-	"chatbotproject/youtube"
+	"youtubebot/bot"
+
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 var (
@@ -28,19 +28,19 @@ func init() {
 
 func main() {
 	// используя токен создаем новый инстанс бота
-	bot, err := tgbotapi.NewBotAPI(telegramBotToken)
+	newBot, err := tgbotapi.NewBotAPI(telegramBotToken)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	log.Printf("Authorized on account %s", newBot.Self.UserName)
 
 	// u - структура с конфигом для получения апдейтов
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
 	// используя конфиг u создаем канал в который будут прилетать новые сообщения
-	updates, err := bot.GetUpdatesChan(u)
+	updates, err := newBot.GetUpdatesChan(u)
 
 	// в канал updates прилетают структуры типа Update
 	// вычитываем их и обрабатываем
@@ -52,17 +52,16 @@ func main() {
 
 		if update.Message.Command() == "sound" {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Какой звук вы хотите?")
-			bot.Send(msg)
+			newBot.Send(msg)
 		}
 
 		text := update.Message.Text
-		
-		// создание сообщения от бота пользвателю
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
-		bot.Send(msg)
 
-		
-		
-		
+		id := bot.Search(text)
+
+		// создание сообщения от бота пользвателю
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, id)
+		newBot.Send(msg)
+
 	}
 }
