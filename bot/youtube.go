@@ -16,7 +16,7 @@ var (
 	maxResults = flag.Int64("max-results", 1, "Max YouTube results")
 )
 
-const developerKey = "AIzaSyCF8UBXeAZ09-OphvJka7ggDSwAMUIexK8"
+const developerKey = "DEVELOPER KEY PASTE HERE"
 
 // Search эта функция возвращает id видеофайла
 // найденного в ютубе (первого совпавщего)

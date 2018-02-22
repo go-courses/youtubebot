@@ -1,7 +1,25 @@
 package bot
 
 func Start() {
-	const telegramBotToken = "501986633:AAGy29EUPkLodQD3QvpYmDE1G5p5Wk-A1DQ"
+	const telegramBotToken = "DEVELOPER KEY PASTE HERE"
 
-	CreateBot(telegramBotToken)
+	bot, _ := CreateBot(telegramBotToken)
+	updates, _ := CreateChannel(bot)
+
+	for update := range updates {
+
+		if update.Message == nil {
+			continue
+		}
+
+		if update.Message.Command() == "sound" {
+			SendMsg(update, bot, "Какой звук вы хотите найти?")
+		}
+
+		text := update.Message.Text
+		id := Search(text)
+
+		SendMsg(update, bot, id)
+
+	}
 }

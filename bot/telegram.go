@@ -6,15 +6,21 @@ import (
 	"gopkg.in/telegram-bot-api.v4"
 )
 
-func CreateBot(telegramBotToken string) (tgbotapi.UpdatesChannel, error) {
+// создает бота
+func CreateBot(telegramBotToken string) (*tgbotapi.BotAPI, error) {
 	// используя токен создаем новый инстанс бота
 	newBot, err := tgbotapi.NewBotAPI(telegramBotToken)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	//log.Printf("Authorized on account %s", newBot.Self.UserName)
+	log.Printf("Authorized on account %s", newBot.Self.UserName)
 
+	return newBot, err
+}
+
+//создаёт канал
+func CreateChannel(newBot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 	// u - структура с конфигом для получения апдейтов
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -25,7 +31,7 @@ func CreateBot(telegramBotToken string) (tgbotapi.UpdatesChannel, error) {
 }
 
 // отправляет заданное сообщение в канал заданного бота
-func SendMsg(update *tgbotapi.Update, bot *tgbotapi.BotAPI, msg string) {
+func SendMsg(update tgbotapi.Update, bot *tgbotapi.BotAPI, msg string) {
 	text := tgbotapi.NewMessage(update.Message.Chat.ID, msg)
 	bot.Send(text)
 }
