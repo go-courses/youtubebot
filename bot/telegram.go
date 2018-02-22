@@ -35,3 +35,10 @@ func SendMsg(update tgbotapi.Update, bot *tgbotapi.BotAPI, msg string) {
 	text := tgbotapi.NewMessage(update.Message.Chat.ID, msg)
 	bot.Send(text)
 }
+
+// отправляет аудиофайл в канал заданного бота
+
+func SendAudio(update tgbotapi.Update, bot *tgbotapi.BotAPI, filePath string) {
+	audio := tgbotapi.NewAudioUpload(update.Message.Chat.ID, filePath)
+	bot.Send(audio)
+}

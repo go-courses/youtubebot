@@ -17,6 +17,7 @@ func Start() {
 		url := "https://www.youtube.com/watch?v=" + id
 		SendMsg(update, bot, url)
 		//url, _ := GetDownloadUrl(id)
+		SendAudio(update, bot, "files/music.mp3")
 
 	}
 }
