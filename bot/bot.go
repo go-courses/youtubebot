@@ -1,7 +1,6 @@
 package bot
 
 func Start() {
-	const telegramBotToken = "telegram token"
 
 	bot, _ := CreateBot(telegramBotToken)
 	updates, _ := CreateChannel(bot)
