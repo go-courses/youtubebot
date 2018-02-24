@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"net/url"
 
 	"github.com/rylio/ytdl"
 
@@ -16,8 +15,6 @@ var (
 	query      = flag.String("query", "Google", "Search term")
 	maxResults = flag.Int64("max-results", 1, "Max YouTube results")
 )
-
-const developerKey = "DEVELOPER_KEY_PASTE_HERE"
 
 // Search эта функция возвращает id видеофайла
 // найденного в ютубе (первого совпавщего)

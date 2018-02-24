@@ -21,15 +21,16 @@ func Start() {
 		SendMsg(update, bot, "Начал поиск")
 
 		// пока что чат бот выдаёт найденное видео в виде полной ссылки и отправляет его
-		url := "https://www.youtube.com/watch?v=" + id
-		SendMsg(update, bot, url)
+		url, title, _ := GetDownloadUrl(id)
 
 		// здесь надо написать код, который скачивает видео и конвертирует его в mp3 например
-
+		Convert(title, url)
 		// для пользователя, чтобы знал, что бот работает.
 		SendMsg(update, bot, "Начал конвертацию")
 
+		link := title + ".mp3"
+
 		// в конце загружается готовое аудио через указанный путь.
-		SendAudio(update, bot, "files/music.mp3")
+		SendAudio(update, bot, link)
 	}
 }
