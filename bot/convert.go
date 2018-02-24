@@ -1,12 +1,12 @@
 package bot
 
 import (
-	"os/exec"
 	"fmt"
+	"os/exec"
 )
 
 func Convert(title, url string) error {
-	fileName := fmt.Sprintf("%s.mp3", title)
+	fileName := fmt.Sprintf("files/%s.mp3", title)
 	ffmpegArgs := []string{
 		"-i", url,
 		"-headers", "User-Agent: Go-http-client/1.1",
