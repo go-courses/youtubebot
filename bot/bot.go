@@ -1,5 +1,10 @@
 package bot
 
+import (
+	"log"
+	"os/exec"
+)
+
 func Start() {
 
 	bot, _ := CreateBot(telegramBotToken)
@@ -23,14 +28,22 @@ func Start() {
 		// пока что чат бот выдаёт найденное видео в виде полной ссылки и отправляет его
 		url, title, _ := GetDownloadUrl(id)
 
-		// здесь надо написать код, который скачивает видео и конвертирует его в mp3 например
+		// скачивает видео и конвертирует его в mp3 например
 		Convert(title, url)
+
 		// для пользователя, чтобы знал, что бот работает.
 		SendMsg(update, bot, "Начал конвертацию")
 
-		link := title + ".mp3"
+		// создает линк, чтобы закидывать файл в
+		link := "files/" + title + ".mp3"
 
 		// в конце загружается готовое аудио через указанный путь.
 		SendAudio(update, bot, link)
+
+		cmd := exec.Command("rm", link)
+		err := cmd.Run()
+		if err != nil {
+			log.Printf("Ошибка %s", err)
+		}
 	}
 }
