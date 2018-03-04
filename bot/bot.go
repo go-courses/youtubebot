@@ -3,6 +3,9 @@ package bot
 import (
 	"log"
 	"os/exec"
+
+	"github.com/go-courses/youtubebot/conf"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -10,10 +13,17 @@ const (
 	developerKey     = ""
 )
 
-func Start() {
+// Start ...
+func Start(c conf.BotConfig) error {
 
-	bot, _ := CreateBot(telegramBotToken)
-	updates, _ := CreateChannel(bot)
+	bot, err := CreateBot(telegramBotToken)
+	if err != nil {
+		return errors.Wrap(err, "could not create bot")
+	}
+	updates, err := CreateChannel(bot)
+	if err != nil {
+		return errors.Wrap(err, "could not create channel")
+	}
 
 	for update := range updates {
 
@@ -51,4 +61,5 @@ func Start() {
 			log.Printf("Ошибка %s", err)
 		}
 	}
+	return nil
 }

@@ -1,9 +1,16 @@
 package main
 
 import (
+	"log"
+
 	"github.com/go-courses/youtubebot/bot"
+	"github.com/go-courses/youtubebot/conf"
 )
 
 func main() {
-	bot.Start()
+	c, err := conf.GetConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Fatal(bot.Start(c))
 }

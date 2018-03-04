@@ -11,12 +11,12 @@ func CreateBot(telegramBotToken string) (*tgbotapi.BotAPI, error) {
 	// используя токен создаем новый инстанс бота
 	newBot, err := tgbotapi.NewBotAPI(telegramBotToken)
 	if err != nil {
-		log.Panic(err)
+		return nil, err
 	}
 
 	log.Printf("Authorized on account %s", newBot.Self.UserName)
 
-	return newBot, err
+	return newBot, nil
 }
 
 //создаёт канал
