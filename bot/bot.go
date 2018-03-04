@@ -115,9 +115,9 @@ func (b *Bot) Start() {
 			log.Println("could not convert video file to mp3 ", err)
 		}
 		b.sendMsg(update, "Начал конвертацию")
-		link := "files/" + title + ".mp3"
-		b.sendAudio(update, link)
-		os.Remove(link)
+		fileName := fmt.Sprintf("%s/%s.mp3", b.c.WorkingDirectory, title)
+		b.sendAudio(update, fileName)
+		os.Remove(fileName)
 
 	}
 }
