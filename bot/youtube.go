@@ -1,80 +1,41 @@
 package bot
 
 import (
-	"flag"
-	"log"
-	"net/http"
-
+	"github.com/pkg/errors"
 	"github.com/rylio/ytdl"
-
-	"google.golang.org/api/googleapi/transport"
-	"google.golang.org/api/youtube/v3"
 )
 
-var (
-	query      = flag.String("query", "Google", "Search term")
-	maxResults = flag.Int64("max-results", 1, "Max YouTube results")
+const (
+	maxResults = 1
 )
 
-// Search эта функция возвращает id видеофайла
-// найденного в ютубе (первого совпавщего)
-func Search(searchText string) string {
-
-	*query = searchText
-
-	flag.Parse()
-
-	client := &http.Client{
-		Transport: &transport.APIKey{Key: developerKey},
-	}
-
-	service, err := youtube.New(client)
-	if err != nil {
-		log.Fatalf("Error creating new YouTube client: %v", err)
-	}
-
+func (b *Bot) search(searchText string) (string, error) {
 	// Make the API call to YouTube.
-	call := service.Search.List("id,snippet").
-		Q(*query).
-		MaxResults(*maxResults)
+	call := b.yClient.Search.List("id,snippet").
+		Q(searchText).
+		MaxResults(maxResults)
 	response, err := call.Do()
 	if err != nil {
-		log.Fatalf("Error making search API call: %v", err)
+		return "", errors.Wrap(err, "could not find videos on youtube")
 	}
 
-	// Group video results in separate lists.
-	videos := make(map[string]string)
-
-	// Iterate through each item and add it to the correct list.
 	for _, item := range response.Items {
 		switch item.Id.Kind {
 		case "youtube#video":
-			videos[item.Id.VideoId] = item.Snippet.Title
+			return item.Id.VideoId, nil
 		}
 	}
 
-	keys := make([]string, 0, len(videos))
-	for k := range videos {
-		keys = append(keys, k)
-	}
-
-	return keys[0]
+	return "", errors.New("unknown error for youtube")
 }
 
-/* Эта функция возвращает прямую ссылку на видео по ID */
-
-func GetDownloadUrl(idVideo string) (string, string, error) {
-
-	infoFromId, err := ytdl.GetVideoInfoFromID(idVideo)
+// GetDownloadURL Эта функция возвращает прямую ссылку на видео по ID
+func GetDownloadURL(idVideo string) (string, string, error) {
+	infoFromID, err := ytdl.GetVideoInfoFromID(idVideo)
 	if err != nil {
 		return "", "", err
 	}
-
-	bestFormats := infoFromId.Formats.Extremes(ytdl.FormatAudioBitrateKey, true)
-
-	downloadUrl, err := infoFromId.GetDownloadURL(bestFormats[0])
-	if err != nil {
-		return "", "", err
-	}
-	return downloadUrl.String(), infoFromId.Title, err
+	bestFormats := infoFromID.Formats.Extremes(ytdl.FormatAudioBitrateKey, true)
+	downloadURL, err := infoFromID.GetDownloadURL(bestFormats[0])
+	return downloadURL.String(), infoFromID.Title, err
 }

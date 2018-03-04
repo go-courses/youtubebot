@@ -12,5 +12,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Fatal(bot.Start(c))
+	b, err := bot.NewTGBot(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+	b.Start()
+
 }
