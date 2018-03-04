@@ -1,7 +1,7 @@
 package main
 
 import (
-	"youtubebot/bot"
+	"github.com/go-courses/youtubebot/bot"
 )
 
 func main() {

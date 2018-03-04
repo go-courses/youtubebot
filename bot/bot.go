@@ -5,6 +5,11 @@ import (
 	"os/exec"
 )
 
+const (
+	telegramBotToken = ""
+	developerKey     = ""
+)
+
 func Start() {
 
 	bot, _ := CreateBot(telegramBotToken)
