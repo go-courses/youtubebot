@@ -15,6 +15,7 @@ import (
 
 const (
 	telegramAPIUpdateInterval = 60
+	maxResults                = 1
 )
 
 // Bot ...
@@ -60,6 +61,26 @@ func (b *Bot) sendMsg(update tgbotapi.Update, msg string) {
 func (b *Bot) sendAudio(update tgbotapi.Update, filePath string) {
 	audio := tgbotapi.NewAudioUpload(update.Message.Chat.ID, filePath)
 	b.tgAPI.Send(audio)
+}
+
+func (b *Bot) search(searchText string) (string, error) {
+	// Make the API call to YouTube.
+	call := b.yClient.Search.List("id,snippet").
+		Q(searchText).
+		MaxResults(maxResults)
+	response, err := call.Do()
+	if err != nil {
+		return "", errors.Wrap(err, "could not find videos on youtube")
+	}
+
+	for _, item := range response.Items {
+		switch item.Id.Kind {
+		case "youtube#video":
+			return item.Id.VideoId, nil
+		}
+	}
+
+	return "", errors.New("unknown error for youtube")
 }
 
 // Start ...
