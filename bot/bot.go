@@ -72,7 +72,7 @@ func (b *Bot) sendAudio(update tgbotapi.Update, filePath string) {
 func (b *Bot) search(searchText string) (string, error) {
 	// Make the API call to YouTube.
 	call := b.yClient.Search.List("id,snippet").
-		Q(searchText)
+		Q(searchText).MaxResults(maxResults)
 	response, err := call.Do()
 	if err != nil {
 		return "", errors.Wrap(err, "could not find videos on youtube")
