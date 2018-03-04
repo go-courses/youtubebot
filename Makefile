@@ -1,6 +1,6 @@
 TARGET=telegram_bot
 
-all: clean test build
+all: clean fmt test build
 
 clean:
 	rm -rf $(TARGET)
@@ -10,3 +10,6 @@ test:
 
 build:
 	go build -o $(TARGET) main.go
+
+fmt:
+	go fmt ./...
