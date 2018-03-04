@@ -9,7 +9,7 @@ import (
 
 func TestConfig(t *testing.T) {
 	os.Setenv("TELEGRAM_TOKEN", "value")
-	os.Setenv("BOT_YOUTUBEDEVELOPERKEY", "key")
+	os.Setenv("YOUTUBE_KEY", "key")
 	c, err := GetConfig()
 	assert.NoError(t, err)
 	assert.Equal(t, "value", c.TelegramToken)

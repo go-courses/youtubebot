@@ -15,7 +15,7 @@ import (
 
 const (
 	telegramAPIUpdateInterval = 60
-	maxResults                = 1
+	maxResults                = 20
 )
 
 // Bot ...
@@ -49,7 +49,13 @@ func NewTGBot(c conf.BotConfig) (*Bot, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("Key ", c.YoutubeDeveloperKey)
 	b.yClient = client
+	if _, err := os.Stat(c.WorkingDirectory); os.IsNotExist(err) {
+		if err := os.Mkdir(c.WorkingDirectory, os.ModePerm); err != nil {
+			log.Println(err)
+		}
+	}
 	return b, nil
 }
 
@@ -66,13 +72,11 @@ func (b *Bot) sendAudio(update tgbotapi.Update, filePath string) {
 func (b *Bot) search(searchText string) (string, error) {
 	// Make the API call to YouTube.
 	call := b.yClient.Search.List("id,snippet").
-		Q(searchText).
-		MaxResults(maxResults)
+		Q(searchText)
 	response, err := call.Do()
 	if err != nil {
 		return "", errors.Wrap(err, "could not find videos on youtube")
 	}
-
 	for _, item := range response.Items {
 		switch item.Id.Kind {
 		case "youtube#video":
@@ -91,18 +95,21 @@ func (b *Bot) Start() {
 			continue
 		}
 		text := update.Message.Text
-		if text == "" {
+		if text == "" || text == "/start" {
 			continue
 		}
+
 		youtubeID, err := b.search(text)
 		if err != nil {
 			log.Println("could not get video id from youtube", err)
 		}
+
 		b.sendMsg(update, "Начал поиск")
 		url, title, err := GetDownloadURL(youtubeID)
 		if err != nil {
 			log.Println("could not get download url", err)
 		}
+
 		err = Convert(title, url)
 		if err != nil {
 			log.Println("could not convert video file to mp3 ", err)

@@ -3,3 +3,4 @@ youtubebot
 bot/constants.go
 *.mp3
 telegram_bot
+.env

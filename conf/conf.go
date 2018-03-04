@@ -5,7 +5,8 @@ import "github.com/kelseyhightower/envconfig"
 // BotConfig ...
 type BotConfig struct {
 	TelegramToken       string `envconfig:"TELEGRAM_TOKEN"`
-	YoutubeDeveloperKey string
+	YoutubeDeveloperKey string `envconfig:"YOUTUBE_KEY"`
+	WorkingDirectory    string `envconfig:"WORKING_DIRECTORY" default:"files"`
 }
 
 // GetConfig ...

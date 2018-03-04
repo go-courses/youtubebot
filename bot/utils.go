@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"os/exec"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"github.com/rylio/ytdl"
 )
 
 // GetDownloadURL Эта функция возвращает прямую ссылку на видео по ID
 func GetDownloadURL(idVideo string) (string, string, error) {
+	spew.Dump(idVideo)
 	infoFromID, err := ytdl.GetVideoInfoFromID(idVideo)
 	if err != nil {
 		return "", "", err
