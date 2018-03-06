@@ -101,8 +101,8 @@ func (b *Bot) Start() {
 			continue
 		}
 
-		converted := make(chan bool)
-		searched := make(chan bool)
+		converted := make(chan bool, 1)
+		searched := make(chan bool, 1)
 		b.sendMsg(update, "Начал поиск")
 		fmt.Println(lastId)
 
