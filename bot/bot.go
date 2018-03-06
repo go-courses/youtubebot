@@ -18,6 +18,8 @@ const (
 	maxResults                = 20
 )
 
+var lastId int
+
 // Bot ...
 type Bot struct {
 	c       conf.BotConfig
@@ -61,9 +63,9 @@ func NewTGBot(c conf.BotConfig) (*Bot, error) {
 
 func (b *Bot) sendMsg(update tgbotapi.Update, msg string) {
 	text := tgbotapi.NewMessage(update.Message.Chat.ID, msg)
-	b.tgAPI.Send(text)
+	sm, _ := b.tgAPI.Send(text)
+	lastId = sm.MessageID
 }
-
 func (b *Bot) sendAudio(update tgbotapi.Update, filePath string) {
 	audio := tgbotapi.NewAudioUpload(update.Message.Chat.ID, filePath)
 	b.tgAPI.Send(audio)
@@ -99,25 +101,59 @@ func (b *Bot) Start() {
 			continue
 		}
 
+		converted := make(chan bool)
+		searched := make(chan bool)
+		b.sendMsg(update, "Начал поиск")
+		fmt.Println(lastId)
+
+		go func() {
+			for {
+				tex := tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Ищу.")
+				b.tgAPI.Send(tex)
+				tex = tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Ищу..")
+				b.tgAPI.Send(tex)
+				tex = tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Ищу...")
+				b.tgAPI.Send(tex)
+				tex = tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Ищу....")
+				b.tgAPI.Send(tex)
+				if <-searched {
+					break
+				}
+			}
+		}()
+
 		youtubeID, err := b.search(text)
 		if err != nil {
 			log.Println("could not get video id from youtube", err)
 		}
-
-		b.sendMsg(update, "Начал поиск")
 		url, title, err := GetDownloadURL(youtubeID)
 		if err != nil {
 			log.Println("could not get download url", err)
 		}
+		searched <- true
 
+		go func() {
+			for {
+				tex := tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Конвертирую.")
+				b.tgAPI.Send(tex)
+				tex = tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Конвертирую..")
+				b.tgAPI.Send(tex)
+				tex = tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Конвертирую...")
+				b.tgAPI.Send(tex)
+				tex = tgbotapi.NewEditMessageText(update.Message.Chat.ID, lastId, "Конвертирую....")
+				b.tgAPI.Send(tex)
+				if <-converted {
+					break
+				}
+			}
+		}()
 		err = Convert(title, url)
 		if err != nil {
 			log.Println("could not convert video file to mp3 ", err)
 		}
-		b.sendMsg(update, "Начал конвертацию")
+		converted <- true
 		fileName := fmt.Sprintf("%s/%s.mp3", b.c.WorkingDirectory, title)
 		b.sendAudio(update, fileName)
 		os.Remove(fileName)
-
 	}
 }
